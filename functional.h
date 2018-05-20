@@ -53,9 +53,9 @@ void encryptMessage() {
     int size, exponentOfEncryption, RsaModule;
     std::cout << "Enter please the size of message: ";
     std::cin >> size;
-    std::cout << "Enter please the Open key: ";
+    std::cout << "Enter please the Open key : ";
     std::cin >> exponentOfEncryption;
-    std::cout << "Enter please the RsaModule ";
+    std::cout << "Enter please the RsaModule: ";
     std::cin >> RsaModule;
     std::cout << "Please enter the text to encrypt below." << std::endl;
     std::cin.ignore();
@@ -85,48 +85,57 @@ void encryptMessage() {
     }
     for (int j = 0; j < size - 1; j++)
         std::cout << std::setw(5) << Text[j]
-                  << std::setw(6) << static_cast<int>(Text[j])
+                  << std::setw(10) << static_cast<int>(Text[j])
                   << std::setw(20) << CryptoText[j] << std::endl;
     std::cout << "Your encrypted text is [ ";
-    for (int i = 0; i < size - 1; i++) std::cout<< CryptoText[i];
+    for (int i = 0; i < size - 1; i++) std::cout << CryptoText[i] << " ";
     std::cout << size << " ]" << std::endl;
     delete[] Text;
     delete[] CryptoText;
 }
+
 void decryptMessage() {
     int size, exponentOfDecryption, RsaModule;
     std::cout << "Enter please the size of message: ";
     std::cin >> size;
-    std::cout << "Enter please the Open key: ";
+    auto *encryptedText = new int[size];
+    std::cout << "Please enter the text to decrypt below. \n "
+                 "NOTE: use spaces to divide blocks" << std::endl;
+    for (int i = 0; i < size; i++) std::cin >> encryptedText[i];
+    std::cout << "Enter please the Secret key: ";
     std::cin >> exponentOfDecryption;
-    std::cout << "Enter please the RsaModule ";
+    std::cout << "Enter please the RsaModule : ";
     std::cin >> RsaModule;
-    std::cout << "Please enter the text to encrypt below." << std::endl;
-    std::cin.ignore();
-    auto *Text = new char[size];
-    std::cin.get(Text, size);
-    std::cout << "Text is = " << Text << std::endl;
-    std::cin.ignore();
-    auto *Tdecrypt = new unsigned int[size];
+
+    auto *decryptedText = new unsigned int[size];
     //Расшифровка полученного кода по формуле mi = (ci^exponentOfDecryption)%RsaModule
     //и перевод его в десятичный код ASCII.
-
+    std::cout << std::endl
+              << std::setw(20) << "CryptoText/Block#"
+              << std::setw(14) << "ASCII"
+              << std::setw(14) << "Text"
+              << std::endl;
     int AsciiKey = 301;
     int m;
     for (int j = 0; j < size; j++) {
         m = 1;
         for (unsigned int i = 0; i < exponentOfDecryption; i++) {
-            m = m * CryptoText[j];
+            m = m * encryptedText[j];
             m = m % RsaModule;
         }
         m = m - AsciiKey;
-        Tdecrypt[j] = static_cast<unsigned int>(m);
+        decryptedText[j] = static_cast<unsigned int>(m);
         AsciiKey += 1;
     }
-    for (int j = 0; j < size - 1; j++) {
-        cout << setw(5) << Text[j] << setw(6) << static_cast<int>(Text[j]) << setw(20)
-             << CryptoText[j] << setw(14) << Tdecrypt[j] << setw(14) << static_cast<char>(Tdecrypt[j]) << endl;
-    }
-    delete[] Tdecrypt;
+    for (int j = 0; j < size - 1; j++)
+        std::cout << std::setw(20) << encryptedText[j]
+                  << std::setw(14) << decryptedText[j]
+                  << std::setw(14) << static_cast<char>(decryptedText[j])
+                  << std::endl;
+    std::cout<< "Message: ";
+    for (int i = 0; i < size; i++) std::cout << static_cast<char>(decryptedText[i]);
+    std::cout << std::endl;
+    delete[] encryptedText;
+    delete[] decryptedText;
 
 }
